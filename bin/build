@@ -26,7 +26,7 @@ ARCH=os.linux.x86_64
 # TODO Test for demeteorizer flags
 # --json || --debug
 
-echo "Demeteorizing application for Meteor v${METEOR_VERSION}"
+echo "Demeteorizing application for $(meteor --version)"
 cd $INPUT_DIR
 demeteorizer --output $OUTPUT_DIR --architecture $ARCH
 

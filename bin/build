@@ -19,22 +19,35 @@ fi
 NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
 
-# recursively search input directory for a package.json
-PACKAGE_PATH=$(find $INPUT_DIR -name package.json ! -path "*/node_modules/*"  ! -path ".git/*"  | \
+# Demeteorizer flags
+ARCH=os.linux.x86_64
+
+# Turn Meteor app into a Node.js app
+# TODO Test for demeteorizer flags
+# --json || --debug
+
+echo "Demeteorizing application for $(meteor --version)"
+cd $INPUT_DIR
+demeteorizer --output $OUTPUT_DIR --architecture $ARCH > /dev/null 2>&1
+
+# Searches a directory top-down looking for a file.
+findFile() {
+  find $2 -name $1 ! -path "*/node_modules/*" ! -path ".git/*" | \
   awk -F'/' '{print $0 "," NF-1}' | \
-  sort -t, -nk2 | awk -F',' '{print $1}' | \
-  head -n 1)
+  sort -t, -nk2 | \
+  awk -F',' '{print $1}' | \
+  head -n 1
+}
+
+# Recursively search input directory for a package.json
+PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR)
 
 if [[ $PACKAGE_PATH ]]; then
-  printf "Package found: ${PACKAGE_PATH/$INPUT_DIR/}\n"
+  printf "Package found: ${PACKAGE_PATH/$OUTPUT_DIR/}\n"
   export PACKAGE_PATH
 
-  # support deriving versions from app.json or package.json
-  if [ -f ${INPUT_DIR}/app.json ] && [[ $MODULUS_CONFIG_ENGINES_NODE || $MODULUS_CONFIG_ENGINES_IOJS ]]; then
-    SOURCE_PATH=${INPUT_DIR}/app.json
-  else
-    SOURCE_PATH=$PACKAGE_PATH
-  fi
+  # support deriving versions from package.json
+  SOURCE_PATH=$PACKAGE_PATH
 
   NODE_VERSION=$(get-version --engine node $SOURCE_PATH 2>/dev/null) || true
   if [[ ! $NODE_VERSION ]]; then
@@ -60,16 +73,7 @@ if [[ $PACKAGE_PATH ]]; then
 
   npm-install
 
-  if [[ $RUN_TESTS == "true" ]]; then
-    printf "Running tests.\n"
-    cd ${PACKAGE_PATH%/*}
-    npm test
-  fi
 fi
-
-cd $CURRENT_DIR
-# Move all the files in Input Dir to Outpup Dir.  Include dot files
-mv $INPUT_DIR/{*,.*} $OUTPUT_DIR > /dev/null 2>&1
 
 MOD_DIR=$OUTPUT_DIR/.modulus
 mkdir -p $MOD_DIR

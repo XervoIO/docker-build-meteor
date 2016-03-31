@@ -28,7 +28,7 @@ ARCH=os.linux.x86_64
 
 echo "Demeteorizing application for $(meteor --version)"
 cd $INPUT_DIR
-demeteorizer --output $OUTPUT_DIR --architecture $ARCH
+demeteorizer --output $OUTPUT_DIR --architecture $ARCH > /dev/null 2>&1
 
 # Searches a directory top-down looking for a file.
 findFile() {

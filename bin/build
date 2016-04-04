@@ -26,9 +26,8 @@ ARCH=os.linux.x86_64
 # TODO Test for demeteorizer flags
 # --json || --debug
 
-echo "Demeteorizing application for $(meteor --version)"
 cd $INPUT_DIR
-demeteorizer --output $OUTPUT_DIR --architecture $ARCH > /dev/null 2>&1
+demeteorizer --output $OUTPUT_DIR --architecture $ARCH
 
 # Searches a directory top-down looking for a file.
 findFile() {

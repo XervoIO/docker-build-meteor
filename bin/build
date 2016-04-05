@@ -20,15 +20,11 @@ NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
 
 # Demeteorizer flags
-ARCH=os.linux.x86_64
-
-# Turn Meteor app into a Node.js app
 # TODO Test for demeteorizer flags
 # --json || --debug
 
-echo "Demeteorizing application for $(meteor --version)"
 cd $INPUT_DIR
-demeteorizer --output $OUTPUT_DIR --architecture $ARCH > /dev/null 2>&1
+demeteorizer --output $OUTPUT_DIR
 
 # Searches a directory top-down looking for a file.
 findFile() {

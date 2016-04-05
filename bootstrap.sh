@@ -23,7 +23,7 @@ cd /opt
 # Install nvm
 export NVM_DIR=/opt/nvm
 mkdir -p $NVM_DIR
-curl https://raw.githubusercontent.com/creationix/nvm/v0.23.3/install.sh | bash
+curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 
 # Ensure mop can use nvm, but not write to it
 chown mop:mop /opt/nvm/nvm.sh

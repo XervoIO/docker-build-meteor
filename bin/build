@@ -24,7 +24,7 @@ source /opt/nvm/nvm.sh
 # --json || --debug
 
 cd $INPUT_DIR
-demeteorizer --output $OUTPUT_DIR
+demeteorizer --server-only --output $OUTPUT_DIR
 
 # Searches a directory top-down looking for a file.
 findFile() {

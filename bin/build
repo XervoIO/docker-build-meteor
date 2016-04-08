@@ -16,11 +16,12 @@ if [[ ! -d $INPUT_DIR ]] || [[ ! -d $OUTPUT_DIR ]]; then
   exit 1
 fi
 
-# Copy Meteor distribution to $HOME
-cp -R /opt/home/.meteor $HOME
-
 NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
+
+# Copy Meteor distribution to $HOME
+printf "Initializing Meteor environment.\n"
+cp -R /opt/home/.meteor $HOME
 
 # Demeteorizer flags
 # TODO Test for demeteorizer flags

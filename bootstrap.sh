@@ -46,7 +46,6 @@ npm install -g get-version
 export DEMETEORIZER_VERSION=3.1.0
 npm install -g demeteorizer@$DEMETEORIZER_VERSION
 
-
 # Install Meteor
 curl https://install.meteor.com/ | sh
 

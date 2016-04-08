@@ -36,7 +36,7 @@ npm install -g get-version
 curl https://install.meteor.com/ | sh
 
 # Install demeteorizer
-export DEMETEORIZER_VERSION=3.0.1
+export DEMETEORIZER_VERSION=3.1.0
 npm install -g demeteorizer@$DEMETEORIZER_VERSION
 
 # Clean stuff up that's no longer needed

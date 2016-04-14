@@ -28,7 +28,7 @@ cp -R /opt/home/.meteor $HOME
 # --json || --debug
 
 cd $INPUT_DIR
-printf "Using $(meteor --version)\n"
+printf "Using $(meteor --version).\n"
 demeteorizer --server-only --output $OUTPUT_DIR
 
 # Searches a directory top-down looking for a file.

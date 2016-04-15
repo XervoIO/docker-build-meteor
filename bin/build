@@ -4,7 +4,7 @@ set -e
 CURRENT_DIR=$(pwd)
 
 if [[ ! $INPUT_DIR ]] || [[ ! $OUTPUT_DIR ]]; then
-  echo "Input/Output directory variables must be set.\n"
+  printf "Input/Output directory variables must be set.\n"
   exit 1
 fi
 
@@ -12,18 +12,23 @@ mkdir -p $INPUT_DIR
 mkdir -p $OUTPUT_DIR
 
 if [[ ! -d $INPUT_DIR ]] || [[ ! -d $OUTPUT_DIR ]]; then
-  echo "Input/Output directories must exist.\n"
+  printf "Input/Output directories must exist.\n"
   exit 1
 fi
 
 NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
 
+# Copy Meteor distribution to $HOME
+printf "Initializing Meteor environment.\n"
+cp -R /opt/home/.meteor $HOME
+
 # Demeteorizer flags
 # TODO Test for demeteorizer flags
 # --json || --debug
 
 cd $INPUT_DIR
+printf "Using $(meteor --version).\n"
 demeteorizer --server-only --output $OUTPUT_DIR
 
 # Searches a directory top-down looking for a file.
@@ -53,7 +58,7 @@ if [[ $PACKAGE_PATH ]]; then
 
   NPM_VERSION=$(get-version --engine npm $SOURCE_PATH 2>/dev/null) || true
   if [[ ! $NPM_VERSION ]]; then
-    echo "Unable to determine npm version.\n"
+    printf "Unable to determine npm version.\n"
     exit 1
   fi
 

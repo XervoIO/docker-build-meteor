@@ -1,15 +1,31 @@
 #!/bin/bash
 set -e
-set -x
+
+# Uncomment the following line while debugging
+# set -x
 
 # Overwrite env from base image
-export HOME=/root
+export HOME=/opt/home
 export TEMP_DIR=/tmp
 export TMPDIR=/tmp
 export TMP_DIR=/tmp
 
+# Other environment variables
+export NVM_DIR=/opt/nvm
+export PROFILE=$HOME/.profile
+export DEMETEORIZER_VERSION=3.1.0
+
+# Create $HOME/.profile and export environment variable
+if [[ ! -d $HOME ]]; then
+  mkdir -p $HOME
+fi
+
+touch $PROFILE
+
 # Install dependent libraries
-apt-get update && apt-get install -y libssl0.9.8 libsqlite-dev libexpat1 libexpat1-dev libicu-dev libpq-dev libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev libxml2-dev \
+apt-get update && apt-get install -y libssl0.9.8 libsqlite-dev \
+  libexpat1 libexpat1-dev libicu-dev libpq-dev libcairo2-dev \
+  libjpeg8-dev libpango1.0-dev libgif-dev libxml2-dev \
   libmagickcore-dev libmagickwand-dev
 
 # Install ImageMagick
@@ -21,7 +37,6 @@ ldconfig /usr/local/lib && rm -rf /opt/ImageMagick*
 cd /opt
 
 # Install nvm
-export NVM_DIR=/opt/nvm
 mkdir -p $NVM_DIR
 curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 
@@ -32,12 +47,14 @@ chmod g-w /opt/nvm/nvm.sh
 # Install get-version
 npm install -g get-version
 
+# Install demeteorizer
+npm install -g demeteorizer@$DEMETEORIZER_VERSION
+
 # Install Meteor
 curl https://install.meteor.com/ | sh
 
-# Install demeteorizer
-export DEMETEORIZER_VERSION=3.1.0
-npm install -g demeteorizer@$DEMETEORIZER_VERSION
+# Ensure mop can copy the Meteor distribution
+chown mop:mop -R $HOME
 
 # Clean stuff up that's no longer needed
 apt-get autoclean && apt-get autoremove -y && apt-get clean

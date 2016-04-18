@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# Uncomment the following line while debugging
+set -x
+
 CURRENT_DIR=$(pwd)
 
 if [[ ! $INPUT_DIR ]] || [[ ! $OUTPUT_DIR ]]; then
@@ -32,7 +35,7 @@ printf "Using $(meteor --version).\n"
 
 if [[ -f $INPUT_DIR/package.json ]]; then
   printf "Installing root package.json dependencies.\n"
-  meteor npm install
+  meteor npm install --production
 fi
 
 demeteorizer --server-only --output $OUTPUT_DIR

@@ -19,6 +19,11 @@ if [[ ! -d $INPUT_DIR ]] || [[ ! -d $OUTPUT_DIR ]]; then
   exit 1
 fi
 
+if [[ ! -d $INPUT_DIR/.meteor ]]; then
+  printf "$INPUT_DIR/.meteor directory must exist.\n"
+  exit 1
+fi
+
 NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
 

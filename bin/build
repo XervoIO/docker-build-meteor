@@ -2,7 +2,7 @@
 set -e
 
 # Uncomment the following line while debugging
-set -x
+# set -x
 
 CURRENT_DIR=$(pwd)
 
@@ -36,7 +36,8 @@ cp -R /opt/home/.meteor $HOME
 # --json || --debug
 
 cd $INPUT_DIR
-printf "Using $(meteor --version).\n"
+VERSION=$(cat $INPUT_DIR/.meteor/release | cut -d '@' -f 2)
+printf "Using Meteor $VERSION.\n"
 
 if [[ -f $INPUT_DIR/package.json ]]; then
   printf "Installing root package.json dependencies.\n"

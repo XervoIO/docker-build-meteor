@@ -29,7 +29,17 @@ cp -R /opt/home/.meteor $HOME
 
 cd $INPUT_DIR
 printf "Using $(meteor --version).\n"
+
+if [[ -f $INPUT_DIR/package.json ]]; then
+  printf "Installing root package.json dependencies.\n"
+  meteor npm install
+fi
+
 demeteorizer --server-only --output $OUTPUT_DIR
+
+if [[ -d $INPUT_DIR/node_modules ]]; then
+  mv $INPUT_DIR/node_modules $OUTPUT_DIR
+fi
 
 # Searches a directory top-down looking for a file.
 findFile() {

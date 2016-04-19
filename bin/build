@@ -5,6 +5,8 @@ set -e
 # set -x
 
 CURRENT_DIR=$(pwd)
+NODE_VERSION=0.10.41
+NPM_VERSION=3.8.6
 
 if [[ ! $INPUT_DIR ]] || [[ ! $OUTPUT_DIR ]]; then
   printf "Input/Output directory variables must be set.\n"
@@ -27,6 +29,12 @@ fi
 NVM_DIR=$HOME/.nvm
 source /opt/nvm/nvm.sh
 
+printf "Installing node $NODE_VERSION\n"
+nvm install $NODE_VERSION > /dev/null 2>&1
+
+printf "Installing npm $NPM_VERSION\n"
+npm install npm@$NPM_VERSION --global > /dev/null 2>&1
+
 # Copy Meteor distribution to $HOME
 printf "Initializing Meteor environment.\n"
 cp -R /opt/home/.meteor $HOME
@@ -36,12 +44,12 @@ cp -R /opt/home/.meteor $HOME
 # --json || --debug
 
 cd $INPUT_DIR
-VERSION=$(cat $INPUT_DIR/.meteor/release | cut -d '@' -f 2)
-printf "Using Meteor $VERSION.\n"
+METEOR_VERSION=$(cat $HOME/.meteor/version)
+printf "Using $METEOR_VERSION.\n"
 
 if [[ -f $INPUT_DIR/package.json ]]; then
   printf "Installing root package.json dependencies.\n"
-  meteor npm install --production
+  npm install --production
 fi
 
 demeteorizer --server-only --output $OUTPUT_DIR
@@ -66,33 +74,11 @@ if [[ $PACKAGE_PATH ]]; then
   printf "Package found: ${PACKAGE_PATH/$OUTPUT_DIR/}\n"
   export PACKAGE_PATH
 
-  # support deriving versions from package.json
-  SOURCE_PATH=$PACKAGE_PATH
-
-  NODE_VERSION=$(get-version --engine node $SOURCE_PATH 2>/dev/null) || true
-  if [[ ! $NODE_VERSION ]]; then
-    printf "Unable to determine Node version. Verify package.json has no errors.\n"
-    exit 1
-  fi
-
-  NPM_VERSION=$(get-version --engine npm $SOURCE_PATH 2>/dev/null) || true
-  if [[ ! $NPM_VERSION ]]; then
-    printf "Unable to determine npm version.\n"
-    exit 1
-  fi
-
-  printf "Installing node $NODE_VERSION\n"
-  nvm install $NODE_VERSION > /dev/null 2>&1
-
-  printf "Installing npm $NPM_VERSION\n"
-  npm install npm@$NPM_VERSION --global > /dev/null 2>&1
-
   if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
     npm-login
   fi
 
   npm-install
-
 fi
 
 MOD_DIR=$OUTPUT_DIR/.modulus

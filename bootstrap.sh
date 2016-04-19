@@ -52,6 +52,7 @@ npm install -g demeteorizer@$DEMETEORIZER_VERSION
 
 # Install Meteor
 curl https://install.meteor.com/ | sh
+echo $(meteor --version) > $HOME/.meteor/version
 
 # Ensure mop can copy the Meteor distribution
 chown mop:mop -R $HOME

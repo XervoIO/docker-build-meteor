@@ -69,7 +69,6 @@ findFile() {
 PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle)
 
 if [[ $PACKAGE_PATH ]]; then
-  printf "Package found: ${PACKAGE_PATH/$OUTPUT_DIR/}\n"
   export PACKAGE_PATH
 
   if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then

@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Uncomment the following line while debugging
-# set -x
-
 # Overwrite env from base image
 export HOME=/opt/home
 export TEMP_DIR=/tmp
@@ -44,7 +41,7 @@ curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 source $PROFILE
 
 # Ensure mop can use nvm, but not write to it
-chown -R mop:mop /opt/nvm/nvm.sh
+chown mop:mop /opt/nvm/nvm.sh
 chmod g-w /opt/nvm/nvm.sh
 
 # Install get-version

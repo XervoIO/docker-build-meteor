@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Uncomment the following line while debugging
-set -x
-
 CURRENT_DIR=$(pwd)
 
 if [[ ! $INPUT_DIR ]] || [[ ! $OUTPUT_DIR ]]; then
@@ -81,9 +78,3 @@ if [[ $PACKAGE_PATH ]]; then
 
   npm-install
 fi
-
-# MOD_DIR=$OUTPUT_DIR/.modulus
-# mkdir -p $MOD_DIR
-
-# # bundle nvm with output
-# cp -R $NVM_DIR/. $MOD_DIR/nvm

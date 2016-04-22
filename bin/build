@@ -16,8 +16,22 @@ if [[ ! -d $INPUT_DIR ]] || [[ ! -d $OUTPUT_DIR ]]; then
   exit 1
 fi
 
-NVM_DIR=$HOME/.nvm
+if [[ ! -d $INPUT_DIR/.meteor ]]; then
+  printf "$INPUT_DIR/.meteor directory must exist.\n"
+  exit 1
+fi
+
+# Setup nvm
+# NVM_DIR=/opt/home/.nvm
+NVM_DIR=$OUTPUT_DIR/.modulus/nvm
 source /opt/nvm/nvm.sh
+
+if [[ ! -d $NVM_DIR ]]; then
+  mkdir -p $NVM_DIR
+fi
+
+cp -R /opt/nvm/* $NVM_DIR
+nvm use deploy
 
 # Copy Meteor distribution to $HOME
 printf "Initializing Meteor environment.\n"
@@ -28,8 +42,19 @@ cp -R /opt/home/.meteor $HOME
 # --json || --debug
 
 cd $INPUT_DIR
-printf "Using $(meteor --version).\n"
+METEOR_VERSION=$(cat $HOME/.meteor/version)
+printf "Using $METEOR_VERSION.\n"
+
+if [[ -f $INPUT_DIR/package.json ]]; then
+  printf "Installing root package.json dependencies.\n"
+  npm install --production
+fi
+
 demeteorizer --server-only --output $OUTPUT_DIR
+
+if [[ -d $INPUT_DIR/node_modules ]]; then
+  mv $INPUT_DIR/node_modules $OUTPUT_DIR
+fi
 
 # Searches a directory top-down looking for a file.
 findFile() {
@@ -41,44 +66,14 @@ findFile() {
 }
 
 # Recursively search input directory for a package.json
-PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR)
+PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle)
 
 if [[ $PACKAGE_PATH ]]; then
-  printf "Package found: ${PACKAGE_PATH/$OUTPUT_DIR/}\n"
   export PACKAGE_PATH
-
-  # support deriving versions from package.json
-  SOURCE_PATH=$PACKAGE_PATH
-
-  NODE_VERSION=$(get-version --engine node $SOURCE_PATH 2>/dev/null) || true
-  if [[ ! $NODE_VERSION ]]; then
-    printf "Unable to determine Node version. Verify package.json has no errors.\n"
-    exit 1
-  fi
-
-  NPM_VERSION=$(get-version --engine npm $SOURCE_PATH 2>/dev/null) || true
-  if [[ ! $NPM_VERSION ]]; then
-    printf "Unable to determine npm version.\n"
-    exit 1
-  fi
-
-  printf "Installing node $NODE_VERSION\n"
-  nvm install $NODE_VERSION > /dev/null 2>&1
-
-  printf "Installing npm $NPM_VERSION\n"
-  npm install npm@$NPM_VERSION --global > /dev/null 2>&1
 
   if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
     npm-login
   fi
 
   npm-install
-
 fi
-
-MOD_DIR=$OUTPUT_DIR/.modulus
-mkdir -p $MOD_DIR
-
-# bundle nvm with output
-nvm alias deploy $(nvm current)
-cp -R $NVM_DIR/. $MOD_DIR/nvm

@@ -21,20 +21,6 @@ fi
 
 touch $PROFILE
 
-# Install dependent libraries
-apt-get update && apt-get install -y libssl0.9.8 libsqlite-dev \
-  libexpat1 libexpat1-dev libicu-dev libpq-dev libcairo2-dev \
-  libjpeg8-dev libpango1.0-dev libgif-dev libxml2-dev \
-  libmagickcore-dev libmagickwand-dev
-
-# Install ImageMagick
-export MAKEFLAGS="-j $(grep -c ^processor /proc/cpuinfo)"
-cd /opt
-wget http://www.imagemagick.org/download/ImageMagick.tar.gz
-tar -xf ImageMagick.tar.gz && mv ImageMagick-* ImageMagick && cd ImageMagick && ./configure && make && sudo make install
-ldconfig /usr/local/lib && rm -rf /opt/ImageMagick*
-cd /opt
-
 # Install nvm
 mkdir -p $NVM_DIR
 curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash

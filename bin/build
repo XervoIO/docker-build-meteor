@@ -42,7 +42,7 @@ cp -R /opt/home/.meteor $HOME
 # --json || --debug
 
 cd $INPUT_DIR
-METEOR_VERSION=$(cat $HOME/.meteor/version)
+METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
 printf "Using $METEOR_VERSION.\n"
 
 if [[ -f $INPUT_DIR/package.json ]]; then
@@ -66,7 +66,7 @@ findFile() {
 }
 
 # Recursively search input directory for a package.json
-PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle)
+PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle/programs/server)
 
 if [[ $PACKAGE_PATH ]]; then
   export PACKAGE_PATH

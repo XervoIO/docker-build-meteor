@@ -12,7 +12,7 @@ export NVM_DIR=/opt/nvm
 export PROFILE=$HOME/.profile
 export DEMETEORIZER_VERSION=3.1.0
 export NODE_VERSION=0.10.41
-export NPM_VERSION=3.8.6
+export NPM_VERSION=3.9.6
 
 # Create $HOME/.profile and export environment variable
 if [[ ! -d $HOME ]]; then
@@ -30,12 +30,6 @@ source $PROFILE
 chown mop:mop /opt/nvm/nvm.sh
 chmod g-w /opt/nvm/nvm.sh
 
-# Install get-version
-npm install -g get-version
-
-# Install demeteorizer
-npm install -g demeteorizer@$DEMETEORIZER_VERSION
-
 # Setup NPM and Node versions
 printf "Installing node $NODE_VERSION\n"
 nvm install $NODE_VERSION > /dev/null 2>&1
@@ -43,11 +37,16 @@ nvm install $NODE_VERSION > /dev/null 2>&1
 printf "Installing npm $NPM_VERSION\n"
 npm install npm@$NPM_VERSION --global > /dev/null 2>&1
 
+# Install get-version
+npm install -g get-version
+
+# Install demeteorizer
+npm install -g demeteorizer@$DEMETEORIZER_VERSION
+
 nvm alias deploy $(nvm current)
 
 # Install Meteor
 curl https://install.meteor.com/ | sh
-echo $(meteor --version) > $HOME/.meteor/version
 
 # Ensure mop can copy the Meteor distribution
 chown mop:mop -R $HOME

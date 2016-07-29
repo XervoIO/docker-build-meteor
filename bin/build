@@ -41,6 +41,8 @@ cp -R /opt/home/.meteor $HOME
 # TODO Test for demeteorizer flags
 # --json || --debug
 
+echo $JSON
+
 cd $INPUT_DIR
 METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
 printf "Using $METEOR_VERSION.\n"

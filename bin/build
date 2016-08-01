@@ -43,33 +43,25 @@ cd $INPUT_DIR
 METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
 printf "Using $METEOR_VERSION.\n"
 
-FLAGS='--server-only --output $OUTPUT_DIR'
+FLAGS="--server-only --output $OUTPUT_DIR"
 
-if [[ $JSON ]] && [[ $DEBUG ]]; then
-  FLAGS="$FLAGS --json $JSON --debug"
-elif [[ $JSON ]] || [[ $DEBUG ]]; then
-  if [[ $JSON ]]; then
-    FLAGS="$FLAGS --json $JSON"
-  elif [[ $DEBUG ]]; then
-    FLAGS="$FLAGS --debug"
-  fi
+if [[ $NPM ]]; then
+  FLAGS="$FLAGS --npm-version $NPM"
+fi
+
+if [[ $NODE ]]; then
+  FLAGS="$FLAGS --node-version $NODE"
+fi
+
+if [[ $DEBUG ]]; then
+  FLAGS="$FLAGS --debug"
 fi
 
 cd $INPUT_DIR
 METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
 printf "Using $METEOR_VERSION.\n"
 
-if [[ -f $INPUT_DIR/package.json ]]; then
-  printf "Installing root package.json dependencies.\n"
-  npm install --production
-fi
-
-printf "Demeteorizer command: '$(echo demeteorizer $FLAGS)'.\n"
 demeteorizer $FLAGS
-
-if [[ -d $INPUT_DIR/node_modules ]]; then
-  mv $INPUT_DIR/node_modules $OUTPUT_DIR
-fi
 
 # Searches a directory top-down looking for a file.
 findFile() {
@@ -80,15 +72,34 @@ findFile() {
   head -n 1
 }
 
-# Recursively search input directory for a package.json
+# Recursively search output directory for a package.json
 PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle/programs/server)
+export PACKAGE_PATH
 
-if [[ $PACKAGE_PATH ]]; then
-  export PACKAGE_PATH
+NODE_VERSION=$(get-version --engine node $PACKAGE_PATH 2>/dev/null) || true
+NPM_VERSION=$(get-version --engine npm $PACKAGE_PATH 2>/dev/null) || true
 
-  if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
-    npm-login
-  fi
-
-  npm-install
+if [[ $NODE_VERSION ]] && [[ 'v$NODE_VERSION' != $(node -v) ]]; then
+  nvm install $NODE_VERSION > /dev/null 2>&1
 fi
+
+if [[ $NPM_VERSION ]]; then
+  npm install npm@$NPM_VERSION --global > /dev/null 2>&1
+fi
+
+nvm alias deploy $(nvm current)
+
+if [[ -f $INPUT_DIR/package.json ]]; then
+  printf "Installing root package.json dependencies.\n"
+  npm install --production
+fi
+
+if [[ -d $INPUT_DIR/node_modules ]]; then
+  mv $INPUT_DIR/node_modules $OUTPUT_DIR
+fi
+
+if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
+  npm-login
+fi
+
+npm-install

@@ -39,16 +39,20 @@ nvm use deploy
 printf "Initializing Meteor environment.\n"
 cp -R /opt/home/.meteor $HOME
 
+cd $INPUT_DIR
+METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
+printf "Using $METEOR_VERSION.\n"
+
+FLAGS='--server-only --output $OUTPUT_DIR'
+
 if [[ $JSON ]] && [[ $DEBUG ]]; then
-  $COMMAND=$(demeteorizer --server-only --output $OUTPUT_DIR --json $(cat $JSON) --debug)
+  FLAGS="$FLAGS --json $JSON --debug"
 elif [[ $JSON ]] || [[ $DEBUG ]]; then
   if [[ $JSON ]]; then
-    $COMMAND=$(demeteorizer --server-only --output $OUTPUT_DIR --json $(cat $JSON))
+    FLAGS="$FLAGS --json $JSON"
   elif [[ $DEBUG ]]; then
-    $COMMAND=$(demeteorizer --server-only --output $OUTPUT_DIR --debug)
+    FLAGS="$FLAGS --debug"
   fi
-else
-  $COMMAND=$DEFAULT_COMMAND
 fi
 
 cd $INPUT_DIR
@@ -60,8 +64,8 @@ if [[ -f $INPUT_DIR/package.json ]]; then
   npm install --production
 fi
 
-printf "Demeteorizer command: '$(COMMAND)'.\n"
-$COMMAND
+printf "Demeteorizer command: '$(echo demeteorizer $FLAGS)'.\n"
+demeteorizer $FLAGS
 
 if [[ -d $INPUT_DIR/node_modules ]]; then
   mv $INPUT_DIR/node_modules $OUTPUT_DIR

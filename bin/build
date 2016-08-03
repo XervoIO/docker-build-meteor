@@ -2,8 +2,6 @@
 set -e
 
 CURRENT_DIR=$(pwd)
-COMMAND=''
-DEFAULT_COMMAND=$(demeteorizer --server-only --output $OUTPUT_DIR)
 
 if [[ ! $INPUT_DIR ]] || [[ ! $OUTPUT_DIR ]]; then
   printf "Input/Output directory variables must be set.\n"
@@ -46,20 +44,18 @@ printf "Using $METEOR_VERSION.\n"
 FLAGS="--server-only --output $OUTPUT_DIR"
 
 if [[ $NPM ]]; then
+  printf "NPM version $NPM specified.\n"
   FLAGS="$FLAGS --npm-version $NPM"
 fi
 
 if [[ $NODE ]]; then
+  printf "Node version $NODE specified.\n"
   FLAGS="$FLAGS --node-version $NODE"
 fi
 
 if [[ $DEBUG ]]; then
   FLAGS="$FLAGS --debug"
 fi
-
-cd $INPUT_DIR
-METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
-printf "Using $METEOR_VERSION.\n"
 
 demeteorizer $FLAGS
 
@@ -79,15 +75,19 @@ export PACKAGE_PATH
 NODE_VERSION=$(get-version --engine node $PACKAGE_PATH 2>/dev/null) || true
 NPM_VERSION=$(get-version --engine npm $PACKAGE_PATH 2>/dev/null) || true
 
-if [[ $NODE_VERSION ]] && [[ 'v$NODE_VERSION' != $(node -v) ]]; then
+if [[ 'v$NODE_VERSION' != $(node -v) ]]; then
   nvm install $NODE_VERSION > /dev/null 2>&1
 fi
 
-if [[ $NPM_VERSION ]]; then
+if [[ $NPM_VERSION  != $(npm -v) ]]; then
   npm install npm@$NPM_VERSION --global > /dev/null 2>&1
 fi
 
 nvm alias deploy $(nvm current)
+
+if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
+  npm-login
+fi
 
 if [[ -f $INPUT_DIR/package.json ]]; then
   printf "Installing root package.json dependencies.\n"
@@ -96,10 +96,6 @@ fi
 
 if [[ -d $INPUT_DIR/node_modules ]]; then
   mv $INPUT_DIR/node_modules $OUTPUT_DIR
-fi
-
-if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
-  npm-login
 fi
 
 npm-install

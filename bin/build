@@ -43,14 +43,25 @@ printf "Using $METEOR_VERSION.\n"
 
 FLAGS="--server-only --output $OUTPUT_DIR"
 
+if [[ $NODE ]]; then
+ printf "Node version $NODE specified.\n"
+ FLAGS="$FLAGS --node-version $NODE"
+ nvm install $NODE_VERSION > /dev/null 2>&1
+fi
+
 if [[ $NPM ]]; then
   printf "NPM version $NPM specified.\n"
   FLAGS="$FLAGS --npm-version $NPM"
+  npm install npm@$NPM_VERSION --global > /dev/null 2>&1
 fi
 
-if [[ $NODE ]]; then
-  printf "Node version $NODE specified.\n"
-  FLAGS="$FLAGS --node-version $NODE"
+if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
+  npm-login
+fi
+
+if [[ -f $INPUT_DIR/package.json ]]; then
+  printf "Install root package.json dependencies.\n"
+  npm install
 fi
 
 if [[ $DEBUG ]]; then
@@ -58,6 +69,10 @@ if [[ $DEBUG ]]; then
 fi
 
 demeteorizer $FLAGS
+
+if [[ -d $INPUT_DIR/node_modules ]]; then
+  mv $INPUT_DIR/node_modules $OUTPUT_DIR
+fi
 
 # Searches a directory top-down looking for a file.
 findFile() {
@@ -72,30 +87,6 @@ findFile() {
 PACKAGE_PATH=$(findFile "package.json" $OUTPUT_DIR/bundle/programs/server)
 export PACKAGE_PATH
 
-NODE_VERSION=$(get-version --engine node $PACKAGE_PATH 2>/dev/null) || true
-NPM_VERSION=$(get-version --engine npm $PACKAGE_PATH 2>/dev/null) || true
-
-if [[ 'v$NODE_VERSION' != $(node -v) ]]; then
-  nvm install $NODE_VERSION > /dev/null 2>&1
-fi
-
-if [[ $NPM_VERSION  != $(npm -v) ]]; then
-  npm install npm@$NPM_VERSION --global > /dev/null 2>&1
-fi
-
 nvm alias deploy $(nvm current)
-
-if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
-  npm-login
-fi
-
-if [[ -f $INPUT_DIR/package.json ]]; then
-  printf "Installing root package.json dependencies.\n"
-  npm install --production
-fi
-
-if [[ -d $INPUT_DIR/node_modules ]]; then
-  mv $INPUT_DIR/node_modules $OUTPUT_DIR
-fi
 
 npm-install

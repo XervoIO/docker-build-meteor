@@ -83,6 +83,7 @@ NPM_VERSION=$(get-version --engine npm $PACKAGE_PATH 2>/dev/null) || true
 
 if [[ 'v$NODE_VERSION' != $(node -v) ]]; then
   nvm install $NODE_VERSION > /dev/null 2>&1
+  nvm use $NODE_VERSION
   npm rebuild > /dev/null 2>&1
 fi
 

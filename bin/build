@@ -16,6 +16,8 @@ if [[ ! -d $INPUT_DIR ]] || [[ ! -d $OUTPUT_DIR ]]; then
   exit 1
 fi
 
+cd $INPUT_DIR
+
 if [[ ! -d $INPUT_DIR/.meteor ]]; then
   printf "$INPUT_DIR/.meteor directory must exist.\n"
   exit 1
@@ -33,11 +35,15 @@ fi
 cp -R /opt/nvm/* $NVM_DIR
 nvm use deploy
 
+if [[ -f $INPUT_DIR/package.json ]]; then
+  printf "Installing root package.json dependencies.\n"
+  npm install --production
+fi
+
 # Copy Meteor distribution to $HOME
 printf "Initializing Meteor environment.\n"
 cp -R /opt/home/.meteor $HOME
 
-cd $INPUT_DIR
 METEOR_VERSION=$(cat $INPUT_DIR/.meteor/release)
 printf "Using $METEOR_VERSION.\n"
 
@@ -77,6 +83,7 @@ NPM_VERSION=$(get-version --engine npm $PACKAGE_PATH 2>/dev/null) || true
 
 if [[ 'v$NODE_VERSION' != $(node -v) ]]; then
   nvm install $NODE_VERSION > /dev/null 2>&1
+  npm rebuild > /dev/null 2>&1
 fi
 
 if [[ $NPM_VERSION  != $(npm -v) ]]; then
@@ -87,11 +94,6 @@ nvm alias deploy $(nvm current)
 
 if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
   npm-login
-fi
-
-if [[ -f $INPUT_DIR/package.json ]]; then
-  printf "Installing root package.json dependencies.\n"
-  npm install --production
 fi
 
 if [[ -d $INPUT_DIR/node_modules ]]; then

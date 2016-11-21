@@ -23,7 +23,7 @@ touch $PROFILE
 
 # Install nvm
 mkdir -p $NVM_DIR
-curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
 source $PROFILE
 
 # Ensure mop can use nvm, but not write to it

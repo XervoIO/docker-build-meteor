@@ -11,8 +11,8 @@ export TMP_DIR=/tmp
 export NVM_DIR=/opt/nvm
 export PROFILE=$HOME/.profile
 export DEMETEORIZER_VERSION=4.3.0
-export NODE_VERSION=4.4.7
-export NPM_VERSION=3.10.5
+export NODE_VERSION=4.6.2
+export NPM_VERSION=4.0.3
 
 # Create $HOME/.profile and export environment variable
 if [[ ! -d $HOME ]]; then

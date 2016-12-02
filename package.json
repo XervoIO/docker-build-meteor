@@ -1,0 +1,28 @@
+{
+  "name": "docker-build-meteor",
+  "description": "The Docker build image for Modulus Meteor applications",
+  "version": "1.4.1",
+  "author": "Jeremiah Harlan <jeremiah.harlan@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/onmodulus/docker-build-meteor/issues"
+  },
+  "homepage": "https://github.com/onmodulus/docker-build-meteor#readme",
+  "keywords": [
+    "build",
+    "docker",
+    "meteor",
+    "modulus",
+    "node"
+  ],
+  "license": "MIT",
+  "main": "./bin/build",
+  "maintainers": [
+    "Jack Boberg <jboberg@progress.com>",
+    "John Musgrave <jmusgrav@progress.com>"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onmodulus/docker-build-meteor.git"
+  }
+}

@@ -35,11 +35,6 @@ fi
 cp -R /opt/nvm/* $NVM_DIR
 nvm use deploy
 
-if [[ -f $INPUT_DIR/package.json ]]; then
-  printf "Installing root package.json dependencies.\n"
-  npm install --production
-fi
-
 # Copy Meteor distribution to $HOME
 printf "Initializing Meteor environment.\n"
 cp -R /opt/home/.meteor $HOME

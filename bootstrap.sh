@@ -10,9 +10,9 @@ export TMP_DIR=/tmp
 # Other environment variables
 export NVM_DIR=/opt/nvm
 export PROFILE=$HOME/.profile
-export DEMETEORIZER_VERSION=4.0.0
-export NODE_VERSION=4.4.7
-export NPM_VERSION=3.10.5
+export DEMETEORIZER_VERSION=4.3.0
+export NODE_VERSION=4.6.2
+export NPM_VERSION=4.0.3
 
 # Create $HOME/.profile and export environment variable
 if [[ ! -d $HOME ]]; then
@@ -23,7 +23,7 @@ touch $PROFILE
 
 # Install nvm
 mkdir -p $NVM_DIR
-curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
 source $PROFILE
 
 # Ensure mop can use nvm, but not write to it

@@ -58,6 +58,10 @@ if [[ $DEBUG ]]; then
   FLAGS="$FLAGS --debug"
 fi
 
+if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
+  npm-login
+fi
+
 demeteorizer $FLAGS
 
 # Searches a directory top-down looking for a file.
@@ -87,10 +91,6 @@ if [[ $NPM_VERSION  != $(npm -v) ]]; then
 fi
 
 nvm alias deploy $(nvm current)
-
-if [[ $NPM_USER ]] && [[ $NPM_PASSWORD ]] && [[ $NPM_EMAIL ]]; then
-  npm-login
-fi
 
 if [[ -d $INPUT_DIR/node_modules ]]; then
   mv $INPUT_DIR/node_modules $OUTPUT_DIR

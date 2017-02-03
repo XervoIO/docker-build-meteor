@@ -21,6 +21,9 @@ fi
 
 touch $PROFILE
 
+# Install expect
+apt-get install -y expect
+
 # Install nvm
 mkdir -p $NVM_DIR
 curl https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash

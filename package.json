@@ -1,7 +1,7 @@
 {
   "name": "docker-build-meteor",
   "description": "The Docker build image for Modulus Meteor applications",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "author": "Jeremiah Harlan <jeremiah.harlan@gmail.com>",
   "bugs": {
     "url": "https://github.com/onmodulus/docker-build-meteor/issues"
